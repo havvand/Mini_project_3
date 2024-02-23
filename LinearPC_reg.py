@@ -123,6 +123,8 @@ print('Test R2', test_r2)
 print('RMSE Test: ', test_RMSE)
 print('RMSE Train: ', train_RMSE)
 
+
+
 #%%
 def olsi(data, f_cols):
     X = data[f_cols]

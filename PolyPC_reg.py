@@ -3,9 +3,9 @@ import numpy as np
 from math import sqrt
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import r2_score, mean_squared_error, explained_variance_score
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_squared_error, explained_variance_score, mean_absolute_error
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures, scale
 import statsmodels.api as sm
 
@@ -22,7 +22,7 @@ print(df.duplicated().sum())
 
 #%% Inspect data
 df_described = df.describe()
-print(df_described)
+data_described = df_described
 
 # Coorelation matrix
 pd.set_option('display.float_format', lambda x: '%.3f' % x)
@@ -32,11 +32,33 @@ print(corr_matrix)
 plt.figure(figsize=(20, 20))
 sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
 
-#%% Drop columns and train the model
+#%% Get p-values of all the features
 target = 'price'
-
-X = df.drop(['id', 'price', 'date', 'sqft_lot', 'sqft_lot15', 'sqft_living', 'sqft_basement'], axis=1)
+X = df.drop(['price', 'date'], axis=1)
 y = df[target]
+
+# Add a constant to the features
+X_with_constant = sm.add_constant(X)
+
+# Fit the model with all features
+model = sm.OLS(y, X_with_constant).fit()
+
+# Get the p-values of all the features
+p_values = model.pvalues
+
+# Print the p-values
+print(p_values)
+
+#%% Drop columns and train the model
+# Dropping houses over 600 sqm because they are outliers - based on how many there are, they skew the model.
+df['sqm_living'] = df['sqft_living'] * 0.092903
+df.drop(['sqft_living'], axis=1, inplace=True)
+df_filtered = df[df['sqm_living'] <= 600]
+print(df.shape)
+print(df_filtered.shape)
+
+X = df_filtered.drop(['id', 'price', 'date', 'sqft_lot', 'sqft_lot15', 'sqft_basement'], axis=1)
+y = df_filtered[target]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -74,6 +96,21 @@ rmse_test = sqrt(mean_squared_error(y_test, y_test_pred))
 print('\nRMSE test: ', rmse_test)
 print('About 137985 units away from the actual values in the test data. \n'
       'The test RMSE is higher then the train RMSE, could be a sign of overfitting.')
+
+#%%
+# Calculate MAE
+mae = mean_absolute_error(y_test, y_test_pred)
+print('Mean Absolute Error:', mae)
+print('The average difference between the predicted and actual values is 88226')
+
+# Calculate MAPE (Mean Absolute Percentage Error) which is the average percentage difference between the predicted and actual values
+def mean_absolute_percentage_error(y_true, y_predi):
+    y_true, y_predi = np.array(y_true), np.array(y_predi)
+    return np.mean(np.abs((y_true - y_predi) / y_true)) * 100
+
+mape = mean_absolute_percentage_error(y_test, y_test_pred)
+print('Mean Absolute Percentage Error:', mape)
+print('The average percentage difference between the predicted and actual values is 17,53%')
 
 #%% Evaluate the model
 
