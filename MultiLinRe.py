@@ -1,5 +1,6 @@
 from math import sqrt
 
+from scipy.stats import trim_mean
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -57,16 +58,30 @@ for i in range(len(corr_matrix.columns)):
 plt.show()
 
 #%%
-# Define the intervals
-'''bins = np.arange(0, df_dropped['sqft_living'].max() + 500, 500)
+import seaborn as sns
+
+# Plot the distribution of the 'price' column
+sns.displot(df_dropped['sqm_living'], kde=True)
+
+# Show the plot
+plt.show()
+#%%
+fig, ax = plt.subplots(figsize=(30, 30))
+sns.boxplot(x='sqm_living', y='price', data=df_dropped, ax=ax)
+ax.set_yticks(np.arange(min(df_dropped['price']), max(df_dropped['price']), 100000))
+ax.set_xticks(np.arange(min(df_dropped['sqm_living']), max(df_dropped['sqm_living'])+1, 200))
+
+#%%
+'''# Define the intervals
+bins = np.arange(0, df_dropped['sqm_living'].max() + 500, 100)
 
 # Convert the 'sqft_living' column to a categorical type with ordered categories
-df_dropped['sqft_living'] = pd.cut(df_dropped['sqft_living'], bins=bins, include_lowest=True, right=False)
-
+df_dropped['sqm_living'] = pd.cut(df_dropped['sqm_living'], bins=bins, include_lowest=True, right=False)
+#%%
 fig, ax = plt.subplots(figsize=(30, 30))
-sns.boxplot(x='sqft_living', y='price', data=df_dropped, ax=ax)
+sns.boxplot(x='sqm_living', y='price', data=df_dropped, ax=ax)
 ax.set_yticks(np.arange(min(df_dropped['price']), max(df_dropped['price']), 100000))
-ax.set_xticks(np.arange(min(df_dropped['sqft_living']), max(df_dropped['sqft_living'])+1, 500))
+ax.set_xticks(np.arange(min(df_dropped['sqm_living']), max(df_dropped['sqm_living'])+1, 200))
 
 plt.show()'''
 
@@ -88,6 +103,9 @@ lin_reg.fit(X_train, y_train)
 
 #%%
 print('Intercept: ', lin_reg.intercept_)
+print('The intercept is when all the independent variables are zero, the price of the house is the intercept value.\n'
+      'This does not mean, that a house with all values zero would be worth the intercept value.\n'
+      'It is just a point on the y-axis, that is set during the traning of the model, to make the line fit the data.')
 print('Coefficients: ', lin_reg.coef_)
 
 list(zip(feature_cols, lin_reg.coef_))
@@ -127,7 +145,7 @@ print(np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
 # Calculate MAE
 mae = mean_absolute_error(y_test, y_pred)
 print('Mean Absolute Error:', mae)
-print('The average difference between the predicted and actual values is 127558')
+print('The average difference between the predicted and actual values is 121200')
 print('The measure gives an equal weight to all errors, whether they are small or big.')
 
 # Calculate MAPE (Mean Absolute Percentage Error) which is the average percentage difference between the predicted and actual values
@@ -137,7 +155,7 @@ def mean_absolute_percentage_error(y_true, y_predi):
 
 mape = mean_absolute_percentage_error(y_test, y_pred)
 print('Mean Absolute Percentage Error:', mape)
-print('The average percentage difference between the predicted and actual values is 24.96%')
+print('The average percentage difference between the predicted and actual values is 24.42%')
 
 #%%
 # Visualise the regression results
@@ -154,6 +172,6 @@ def olsi(data, f_cols):
 
 model = olsi(df_dropped, feature_cols)
 
-print('AIC', model.aic)
+print('AIC', model.aic) #
 model.summary()
 

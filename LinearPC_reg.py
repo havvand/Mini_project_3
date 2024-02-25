@@ -21,6 +21,8 @@ print(df.sample)
 
 #%% Clean and prepare the data
 df.info()
+# No nan values
+print(df.isna().sum())
 # No missing values
 print(df.notnull().sum())
 # No duplicates

@@ -35,6 +35,7 @@ sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
 #%% Get p-values of all the features
 target = 'price'
 X = df.drop(['price', 'date'], axis=1)
+print(X)
 y = df[target]
 
 # Add a constant to the features
@@ -57,6 +58,10 @@ df_filtered = df[df['sqm_living'] <= 600]
 print(df.shape)
 print(df_filtered.shape)
 
+
+sns.pairplot(df, x_vars=['sqm_living', 'bathrooms', 'grade', 'condition'], y_vars='price', height=7, aspect=0.7, kind='reg')
+
+#%%
 X = df_filtered.drop(['id', 'price', 'date', 'sqft_lot', 'sqft_lot15', 'sqft_basement'], axis=1)
 y = df_filtered[target]
 
@@ -90,18 +95,18 @@ print('Test score: ', Test_Score)
 # Calculating the RMSE on the training set
 rmse_train = sqrt(mean_squared_error(y, y_pred))
 print('\nRMSE train: ', rmse_train)
-print('About 129173 units away from the actual values in the traning data.')
+print('About 124269 units away from the actual values in the traning data.')
 # Calculating the RMSE on the test set
 rmse_test = sqrt(mean_squared_error(y_test, y_test_pred))
 print('\nRMSE test: ', rmse_test)
-print('About 137985 units away from the actual values in the test data. \n'
-      'The test RMSE is higher then the train RMSE, could be a sign of overfitting.')
+print('About 124574 units away from the actual values in the test data. \n'
+      )
 
 #%%
 # Calculate MAE
 mae = mean_absolute_error(y_test, y_test_pred)
 print('Mean Absolute Error:', mae)
-print('The average difference between the predicted and actual values is 88226')
+print('The average difference between the predicted and actual values is 82717')
 
 # Calculate MAPE (Mean Absolute Percentage Error) which is the average percentage difference between the predicted and actual values
 def mean_absolute_percentage_error(y_true, y_predi):
@@ -110,7 +115,7 @@ def mean_absolute_percentage_error(y_true, y_predi):
 
 mape = mean_absolute_percentage_error(y_test, y_test_pred)
 print('Mean Absolute Percentage Error:', mape)
-print('The average percentage difference between the predicted and actual values is 17,53%')
+print('The average percentage difference between the predicted and actual values is 16.83%')
 
 #%% Evaluate the model
 
@@ -129,5 +134,6 @@ def olsi_poly(data, f_cols, degree):
     model = sm.OLS(y, X_poly).fit()
     return model
 
-model = olsi_poly(df, ['bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot', 'floors', 'waterfront', 'view', 'condition', 'grade', 'sqft_above', 'sqft_basement', 'yr_built', 'yr_renovated', 'zipcode', 'lat', 'long', 'sqft_living15', 'sqft_lot15'], 2)
+model = olsi_poly(df, X.columns, 3)
 print(model.summary())
+print(X.columns)
