@@ -14,9 +14,10 @@ they were very few and very extreme.
 
 # Results:
 
+### Results for Linear Regression
 Did a Principal Component Analysis and found that 15 components was the optimal for the regression. (see graph in Linear code)
 
-### Results for Linear Regression
+
 **Train R2:**  0.6935641365311427 \
 **Test R2:** 0.6929698293624038 \
 **RMSE Test:**  215443.29128718175 \
