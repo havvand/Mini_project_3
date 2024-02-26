@@ -3,20 +3,22 @@ During the cleaning of the data we found no missing, null or duplicated values. 
 
 We inspected the data and found that there was a file format issue with the 'date' column. The feature was dropped due to its lack of relevance to the analysis.
 
-## Data Exploration
+## Data Exploration and challenges
 We found that the data had a lot of correlation between the features. The most important correlation was between the 'price' and 'sqft_living' features.
 Due to the high correlation between the features, we decided to keep as many as possible, being that most of them had a p-value lower than 0.05
 
-Furthermore we found the data consisted of many outliers, which we decided to keep. We based our decision on
-the fact that the data was real estate data, and that the outliers most likely are real data. 
+Furthermore, we found the data consisted of many outliers, which we decided to keep. We based our decision on
+the fact that we are dealing with real estate data, and that the outliers most likely are real data. 
 We did however remove the most extreme outliers, which we defined as houses over 600 square meters, because
 they were very few and very extreme.
 
 # Results:
 
 ### Results for Linear Regression
-Did a Principal Component Analysis and found that 15 components was the optimal for the regression. (see graph in Linear code)
-
+Due to the high level of multicollinearity, we decided to use PCA to try and reduce the number of features.\
+The Principal Component Analysis found that 15 components was the optimal for the regression. (see graph in Linear code) \
+\
+The resulting Principal Component Regression model had the following results:
 
 **Train R2:**  0.699084588759341 \
 **Test R2:** 0.6914409782028608 \
