@@ -28,6 +28,18 @@ print(df.notnull().sum())
 # No duplicates
 print(df.duplicated().sum())
 
+#%%
+import seaborn as sns
+df['sqm_living'] = df['sqft_living'] * 0.092903
+df['sqm_living15'] = df['sqft_living15'] * 0.092903
+df = df[df['sqm_living'] <= 600].drop(['sqft_living'], axis=1)
+df = df[df['sqm_living15'] <= 600].drop(['sqft_living15'], axis=1)
+
+# Plot the distribution of the 'price' column
+sns.displot(df['sqm_living'], kde=True)
+
+# Show the plot
+plt.show()
 #%% Inspect data
 df_described = df.describe()
 print(df_described)
@@ -42,9 +54,19 @@ sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
 
 #%% Drop columns and train the model
 target = 'price'
-X = df.drop(['id', 'price', 'date'], axis=1)
+X = df.drop(['id', 'price', 'date', 'sqft_basement', 'sqft_above'], axis=1)
 y = df[target]
 
+# Add a constant to the DataFrame for the intercept
+X = stm.add_constant(X)
+
+vif = pd.DataFrame()
+vif["variables"] = X.columns
+vif["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+
+print(vif)
+
+#%%
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 #%% Standardize features
@@ -84,6 +106,7 @@ plt.xlim(xmin = -1)
 plt.xticks(np.arange(X_train_pc.shape[1]), np.arange(1, X_train_pc.shape[1] + 1)) # Set x-ticks to min value of 1 and max value of number of principal components.
 plt.axhline(y=lr_score_train, color='g', linestyle='-') # Draw a horizontal line at the value of the baseline RMSE
 plt.show()
+
 
 #%% Run PC Regression
 best_number_of_components = 15
@@ -131,9 +154,9 @@ print('RMSE Train: ', train_RMSE)
 def olsi(data, f_cols):
     X = data[f_cols]
     y = df['price']
-    X = sm.add_constant(X)
+    X = stm.add_constant(X)
     #fit linear regression model
-    model = sm.OLS(y, X).fit()
+    model = stm.OLS(y, X).fit()
     return model
 
 model = olsi(X, X.columns)

@@ -18,10 +18,10 @@ they were very few and very extreme.
 Did a Principal Component Analysis and found that 15 components was the optimal for the regression. (see graph in Linear code)
 
 
-**Train R2:**  0.6935641365311427 \
-**Test R2:** 0.6929698293624038 \
-**RMSE Test:**  215443.29128718175 \
-**RMSE Train:**  200088.5323205967
+**Train R2:**  0.699084588759341 \
+**Test R2:** 0.6914409782028608 \
+**RMSE Test:**  189931.03742284642 \
+**RMSE Train:**  187165.6654924163
 
 Shows indication of overfitting. 
 
