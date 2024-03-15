@@ -4,7 +4,7 @@ During the cleaning of the data we found no missing, null or duplicated values. 
 We inspected the data and found that there was a file format issue with the 'date' column. The feature was dropped due to its lack of relevance to the analysis.
 
 ## Data Exploration and challenges
-We found that the data had a lot of correlation between the features. The most important correlation was between the 'price' and 'sqft_living' features.
+We found that the data had a high degree of correlation between the features. The most important correlation was between the 'price' and 'sqft_living' features.
 Due to the high correlation between the features, we decided to keep as many as possible, being that most of them had a p-value lower than 0.05
 
 Furthermore, we found the data consisted of many outliers, which we decided to keep. We based our decision on
